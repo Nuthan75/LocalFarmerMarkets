@@ -1,1 +1,912 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Local Farmer Market</title>
+
+<style>
+:root {
+  --green: #237547;
+  --dark: #164c30;
+  --light: #edf7ef;
+  --border: #dce8df;
+  --text: #24372b;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: var(--text);
+  background: #f7faf7;
+}
+header {
+  background: white;
+  padding: 18px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  box-shadow: 0 2px 10px #0001;
+}
+.brand { font-size: 21px; font-weight: bold; color: var(--dark); }
+nav { display: flex; gap: 15px; flex-wrap: wrap; }
+nav a { color: var(--dark); text-decoration: none; font-weight: bold; font-size: 14px; }
+nav a:hover { color: #45a565; }
+.hero {
+  padding: 55px 8%;
+  background: linear-gradient(120deg, #e2f4e5, #f5f8df);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.hero h1 { font-size: clamp(30px, 5vw, 48px); color: var(--dark); margin: 8px 0; }
+.hero p { color: #526858; }
+.hero-icon { font-size: 100px; }
+.tag { color: var(--green); font-size: 12px; font-weight: bold; letter-spacing: 2px; }
+.container { max-width: 1150px; width: 92%; margin: auto; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin: 28px 0;
+}
+.stat, .card, .form-card, .table-box, .about {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+.stat { text-align: center; }
+.stat span { font-size: 27px; }
+.stat h2 { color: var(--green); margin: 5px; font-size: 28px; }
+.stat p { color: #718076; margin: 0; font-size: 13px; }
+section.content-section { padding: 28px 0; }
+.section-heading { text-align: center; margin-bottom: 24px; }
+.section-heading h2 { color: var(--dark); margin: 5px 0; }
+.section-heading p:last-child { color: #718076; }
+.form-card { max-width: 780px; margin: auto; }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+label { display: flex; flex-direction: column; gap: 7px; font-size: 14px; font-weight: bold; }
+.full { grid-column: 1 / -1; }
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cddbd0;
+  border-radius: 7px;
+  background: white;
+  font: inherit;
+  font-size: 14px;
+}
+input:focus, select:focus { outline: 2px solid #b6dfc2; }
+button, .main-button {
+  border: none;
+  border-radius: 7px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+.primary, .main-button { background: var(--green); color: white; }
+.primary:hover, .main-button:hover { background: var(--dark); }
+.edit { background: #e4f0ff; color: #1759a5; }
+.delete { background: #ffe8e8; color: #b42323; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+.card h3 { color: var(--dark); margin: 0 0 10px; overflow-wrap: anywhere; }
+.card p { margin: 6px 0; font-size: 14px; overflow-wrap: anywhere; }
+.price { color: var(--green); font-size: 20px !important; font-weight: bold; }
+.subheading { margin: 28px 0 14px; color: var(--dark); }
+.search { display: block; max-width: 600px; margin: 0 auto 20px; }
+.empty {
+  background: white;
+  border: 1px dashed #cddbd0;
+  border-radius: 9px;
+  padding: 20px;
+  text-align: center;
+  color: #718076;
+  grid-column: 1 / -1;
+}
+.total {
+  background: var(--light);
+  padding: 15px;
+  margin-bottom: 18px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.total strong { color: var(--green); font-size: 22px; }
+.table-box { overflow-x: auto; padding: 0; }
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; font-size: 13px; }
+th { background: var(--light); color: var(--dark); }
+tr:last-child td { border-bottom: none; }
+.about { margin: 30px 0; background: var(--light); }
+footer { background: var(--dark); color: white; text-align: center; padding: 20px; }
+#message {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--dark);
+  color: white;
+  padding: 14px 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  z-index: 20;
+}
+@media(max-width: 750px) {
+  header { position: static; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media(max-width: 500px) {
+  .form-grid, .grid { grid-template-columns: 1fr; }
+  .hero-icon { display: none; }
+  nav { gap: 10px; }
+  .hero { padding: 35px 6%; }
+  .form-card { padding: 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">🌱 Local Farmer Market</div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#farmers">Farmers</a>
+    <a href="#crops">Crops</a>
+    <a href="#buyers">Buyers</a>
+    <a href="#orders">Orders</a>
+  </nav>
+</header>
+
+<section id="home" class="hero">
+  <div>
+    <div class="tag">FRESH • LOCAL • NATURAL</div>
+    <h1>Connecting Farmers<br>With Buyers</h1>
+    <p>Buy fresh agricultural products directly from local farmers.</p>
+    <a class="main-button" href="#crops" style="display:inline-block;text-decoration:none">Explore Crops</a>
+  </div>
+  <div class="hero-icon">🌾</div>
+</section>
+
+<main class="container">
+
+  <div class="stats">
+    <div class="stat"><span>👨‍🌾</span><h2 id="farmerCount">0</h2><p>Farmers</p></div>
+    <div class="stat"><span>🌾</span><h2 id="cropCount">0</h2><p>Available Crops</p></div>
+    <div class="stat"><span>🛒</span><h2 id="buyerCount">0</h2><p>Buyers</p></div>
+    <div class="stat"><span>📦</span><h2 id="orderCount">0</h2><p>Orders</p></div>
+  </div>
+
+  <section id="farmers" class="content-section">
+    <div class="section-heading">
+      <div class="tag">FOR FARMERS</div>
+      <h2>Farmer Registration</h2>
+      <p>Register farmers and manage their details.</p>
+    </div>
+
+    <form id="farmerForm" class="form-card">
+      <div class="form-grid">
+        <label>Farmer Name
+          <input id="farmerName" required placeholder="Enter name">
+        </label>
+        <label>Phone Number
+          <input id="farmerPhone" type="tel" required placeholder="Enter phone">
+        </label>
+        <label class="full">Village / Location
+          <input id="farmerLocation" required placeholder="Enter location">
+        </label>
+      </div>
+      <button class="primary" type="submit">Register Farmer</button>
+      <button type="button" id="cancelFarmerEdit" hidden>Cancel Edit</button>
+    </form>
+
+    <h3 class="subheading">Registered Farmers</h3>
+    <div id="farmersList" class="grid"></div>
+  </section>
+
+  <section id="crops" class="content-section">
+    <div class="section-heading">
+      <div class="tag">FRESH FROM FARMS</div>
+      <h2>Available Crops</h2>
+      <p>Search crops and manage prices and stock.</p>
+    </div>
+
+    <input id="cropSearch" class="search" type="search" placeholder="🔍 Search crop or farmer">
+    <div id="cropsList" class="grid"></div>
+
+    <h3 class="subheading">Add / Edit Crop</h3>
+    <form id="cropForm" class="form-card">
+      <div class="form-grid">
+        <label class="full">Select Farmer
+          <select id="cropFarmer" required></select>
+        </label>
+        <label>Crop Name
+          <input id="cropName" required placeholder="Rice, Tomato, etc.">
+        </label>
+        <label>Price per kg (₹)
+          <input id="cropPrice" type="number" min="0.01" step="0.01" required>
+        </label>
+        <label class="full">Available Quantity (kg)
+          <input id="cropQuantity" type="number" min="0" step="0.01" required>
+        </label>
+      </div>
+      <button class="primary" type="submit">Save Crop</button>
+      <button type="button" id="cancelCropEdit" hidden>Cancel Edit</button>
+    </form>
+  </section>
+
+  <section id="buyers" class="content-section">
+    <div class="section-heading">
+      <div class="tag">FOR BUYERS</div>
+      <h2>Buyer Registration</h2>
+      <p>Register buyers and manage their details.</p>
+    </div>
+
+    <form id="buyerForm" class="form-card">
+      <div class="form-grid">
+        <label>Buyer Name
+          <input id="buyerName" required placeholder="Enter name">
+        </label>
+        <label>Phone Number
+          <input id="buyerPhone" type="tel" required placeholder="Enter phone">
+        </label>
+      </div>
+      <button class="primary" type="submit">Register Buyer</button>
+      <button type="button" id="cancelBuyerEdit" hidden>Cancel Edit</button>
+    </form>
+
+    <h3 class="subheading">Registered Buyers</h3>
+    <div id="buyersList" class="grid"></div>
+  </section>
+
+  <section id="orders" class="content-section">
+    <div class="section-heading">
+      <div class="tag">BUY DIRECTLY</div>
+      <h2>Place an Order</h2>
+      <p>Choose a buyer, select a crop, and enter the quantity.</p>
+    </div>
+
+    <form id="orderForm" class="form-card">
+      <div class="form-grid">
+        <label class="full">Select Buyer
+          <select id="orderBuyer" required></select>
+        </label>
+        <label class="full">Select Crop
+          <select id="orderCrop" required></select>
+        </label>
+        <label class="full">Quantity (kg)
+          <input id="orderQuantity" type="number" min="0.01" step="0.01" required>
+        </label>
+      </div>
+      <div class="total"><span>Estimated Total</span><strong id="orderTotal">₹0.00</strong></div>
+      <button class="primary" type="submit">Confirm Order</button>
+    </form>
+
+    <h3 class="subheading">Order History</h3>
+    <div id="ordersList" class="table-box"></div>
+  </section>
+
+  <section class="about">
+    <h2>About Local Farmer Market</h2>
+    <p>This student project connects local farmers and buyers. It helps manage farmer registration, crop listings, stock, buyer registration, orders, and order history.</p>
+  </section>
+</main>
+
+<footer>🌱 Local Farmer Market | Student Project</footer>
+<div id="message" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+// ===== STORAGE =====
+const KEY = "localFarmerMarketComplete_v1";
+
+function emptyData() {
+  return { farmers: [], crops: [], buyers: [], orders: [] };
+}
+
+function loadData() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY));
+    if (!saved || !Array.isArray(saved.farmers) ||
+        !Array.isArray(saved.crops) ||
+        !Array.isArray(saved.buyers) ||
+        !Array.isArray(saved.orders)) {
+      return emptyData();
+    }
+    return saved;
+  } catch (error) {
+    return emptyData();
+  }
+}
+
+let data = loadData();
+let editingFarmer = null;
+let editingCrop = null;
+let editingBuyer = null;
+let messageTimer;
+
+function saveData() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(data));
+    return true;
+  } catch (error) {
+    notify("Could not save data. Browser storage may be full or disabled.");
+    return false;
+  }
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function byId(id) {
+  return document.getElementById(id);
+}
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, function (c) {
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+
+function money(value) {
+  return "₹" + Number(value).toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function notify(text) {
+  const box = byId("message");
+  box.textContent = text;
+  box.style.display = "block";
+  clearTimeout(messageTimer);
+  messageTimer = setTimeout(() => box.style.display = "none", 3000);
+}
+
+function empty(text) {
+  return '<div class="empty">' + safe(text) + '</div>';
+}
+
+function farmerName(id) {
+  const farmer = data.farmers.find(x => x.id === id);
+  return farmer ? farmer.name : "Unknown farmer";
+}
+
+// ===== FARMER FORM =====
+byId("farmerForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const name = byId("farmerName").value.trim();
+  const phone = byId("farmerPhone").value.trim();
+  const location = byId("farmerLocation").value.trim();
+
+  if (!name || !phone || !location) {
+    notify("Please fill in all farmer details.");
+    return;
+  }
+
+  const oldData = JSON.stringify(data);
+
+  if (editingFarmer) {
+    const item = data.farmers.find(x => x.id === editingFarmer);
+    if (!item) return;
+    item.name = name;
+    item.phone = phone;
+    item.location = location;
+  } else {
+    data.farmers.push({id: uid(), name, phone, location});
+  }
+
+  if (!saveData()) {
+    data = JSON.parse(oldData);
+    return;
+  }
+
+  resetFarmerForm();
+  renderAll();
+  notify(editingFarmer ? "Farmer updated!" : "Farmer registered!");
+});
+
+function resetFarmerForm() {
+  editingFarmer = null;
+  byId("farmerForm").reset();
+  byId("farmerForm").querySelector('button[type="submit"]').textContent = "Register Farmer";
+  byId("cancelFarmerEdit").hidden = true;
+}
+
+byId("cancelFarmerEdit").addEventListener("click", resetFarmerForm);
+
+// ===== BUYER FORM =====
+byId("buyerForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const name = byId("buyerName").value.trim();
+  const phone = byId("buyerPhone").value.trim();
+
+  if (!name || !phone) {
+    notify("Please fill in buyer details.");
+    return;
+  }
+
+  const oldData = JSON.stringify(data);
+
+  if (editingBuyer) {
+    const item = data.buyers.find(x => x.id === editingBuyer);
+    if (!item) return;
+    item.name = name;
+    item.phone = phone;
+  } else {
+    data.buyers.push({id: uid(), name, phone});
+  }
+
+  if (!saveData()) {
+    data = JSON.parse(oldData);
+    return;
+  }
+
+  resetBuyerForm();
+  renderAll();
+  notify(editingBuyer ? "Buyer updated!" : "Buyer registered!");
+});
+
+function resetBuyerForm() {
+  editingBuyer = null;
+  byId("buyerForm").reset();
+  byId("buyerForm").querySelector('button[type="submit"]').textContent = "Register Buyer";
+  byId("cancelBuyerEdit").hidden = true;
+}
+
+byId("cancelBuyerEdit").addEventListener("click", resetBuyerForm);
+
+// ===== CROP FORM =====
+byId("cropForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const farmerId = byId("cropFarmer").value;
+  const name = byId("cropName").value.trim();
+  const price = Number(byId("cropPrice").value);
+  const quantity = Number(byId("cropQuantity").value);
+
+  if (!data.farmers.some(x => x.id === farmerId)) {
+    notify("Please register and select a farmer first.");
+    return;
+  }
+  if (!name || !Number.isFinite(price) || price <= 0 ||
+      !Number.isFinite(quantity) || quantity < 0) {
+    notify("Enter a valid crop name, price and quantity.");
+    return;
+  }
+
+  const oldData = JSON.stringify(data);
+
+  if (editingCrop) {
+    const item = data.crops.find(x => x.id === editingCrop);
+    if (!item) return;
+    item.farmerId = farmerId;
+    item.name = name;
+    item.price = price;
+    item.quantity = quantity;
+  } else {
+    data.crops.push({id: uid(), farmerId, name, price, quantity});
+  }
+
+  if (!saveData()) {
+    data = JSON.parse(oldData);
+    return;
+  }
+
+  resetCropForm();
+  renderAll();
+  notify(editingCrop ? "Crop updated!" : "Crop added!");
+});
+
+function resetCropForm() {
+  editingCrop = null;
+  byId("cropForm").reset();
+  byId("cropForm").querySelector('button[type="submit"]').textContent = "Save Crop";
+  byId("cancelCropEdit").hidden = true;
+}
+
+byId("cancelCropEdit").addEventListener("click", resetCropForm);
+
+// ===== ORDER TOTAL =====
+function updateOrderTotal() {
+  const crop = data.crops.find(x => x.id === byId("orderCrop").value);
+  const qty = Number(byId("orderQuantity").value);
+
+  byId("orderTotal").textContent =
+    crop && Number.isFinite(qty) && qty > 0
+      ? money(crop.price * qty)
+      : money(0);
+}
+
+byId("orderCrop").addEventListener("change", function () {
+  const crop = data.crops.find(x => x.id === this.value);
+  if (crop) byId("orderQuantity").max = crop.quantity;
+  else byId("orderQuantity").removeAttribute("max");
+  updateOrderTotal();
+});
+
+byId("orderQuantity").addEventListener("input", updateOrderTotal);
+
+// ===== PLACE ORDER =====
+byId("orderForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const buyer = data.buyers.find(x => x.id === byId("orderBuyer").value);
+  const crop = data.crops.find(x => x.id === byId("orderCrop").value);
+  const quantity = Number(byId("orderQuantity").value);
+
+  if (!buyer || !crop) {
+    notify("Register a buyer and add a crop first.");
+    return;
+  }
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    notify("Enter a valid quantity.");
+    return;
+  }
+  if (quantity > crop.quantity) {
+    notify("Only " + crop.quantity + " kg is available.");
+    return;
+  }
+
+  const oldData = JSON.stringify(data);
+  const order = {
+    id: uid(),
+    buyerId: buyer.id,
+    buyerName: buyer.name,
+    cropId: crop.id,
+    cropName: crop.name,
+    farmerId: crop.farmerId,
+    farmerName: farmerName(crop.farmerId),
+    quantity,
+    price: crop.price,
+    total: Math.round(crop.price * quantity * 100) / 100,
+    date: new Date().toLocaleString()
+  };
+
+  crop.quantity = Math.round((crop.quantity - quantity) * 10000) / 10000;
+  data.orders.push(order);
+
+  if (!saveData()) {
+    data = JSON.parse(oldData);
+    return;
+  }
+
+  byId("orderForm").reset();
+  byId("orderTotal").textContent = money(0);
+  renderAll();
+  notify("Order placed successfully! Total: " + money(order.total));
+});
+
+// ===== EDIT FARMER =====
+function editFarmer(id) {
+  const item = data.farmers.find(x => x.id === id);
+  if (!item) return;
+
+  editingFarmer = id;
+  byId("farmerName").value = item.name;
+  byId("farmerPhone").value = item.phone;
+  byId("farmerLocation").value = item.location;
+  byId("farmerForm").querySelector('button[type="submit"]').textContent = "Update Farmer";
+  byId("cancelFarmerEdit").hidden = false;
+  byId("farmers").scrollIntoView({behavior: "smooth"});
+}
+
+// ===== EDIT BUYER =====
+function editBuyer(id) {
+  const item = data.buyers.find(x => x.id === id);
+  if (!item) return;
+
+  editingBuyer = id;
+  byId("buyerName").value = item.name;
+  byId("buyerPhone").value = item.phone;
+  byId("buyerForm").querySelector('button[type="submit"]').textContent = "Update Buyer";
+  byId("cancelBuyerEdit").hidden = false;
+  byId("buyers").scrollIntoView({behavior: "smooth"});
+}
+
+// ===== EDIT CROP =====
+function editCrop(id) {
+  const item = data.crops.find(x => x.id === id);
+  if (!item) return;
+
+  editingCrop = id;
+  byId("cropFarmer").value = item.farmerId;
+  byId("cropName").value = item.name;
+  byId("cropPrice").value = item.price;
+  byId("cropQuantity").value = item.quantity;
+  byId("cropForm").querySelector('button[type="submit"]').textContent = "Update Crop";
+  byId("cancelCropEdit").hidden = false;
+  byId("crops").scrollIntoView({behavior: "smooth"});
+}
+
+// ===== DELETE RECORDS =====
+function deleteFarmer(id) {
+  if (data.crops.some(x => x.farmerId === id)) {
+    notify("Delete this farmer's crops first.");
+    return;
+  }
+  if (!confirm("Delete this farmer?")) return;
+
+  const oldData = JSON.stringify(data);
+  data.farmers = data.farmers.filter(x => x.id !== id);
+  if (!saveData()) data = JSON.parse(oldData);
+
+  renderAll();
+  notify("Farmer deleted.");
+}
+
+function deleteBuyer(id) {
+  if (!confirm("Delete this buyer? Existing order history will remain.")) return;
+
+  const oldData = JSON.stringify(data);
+  data.buyers = data.buyers.filter(x => x.id !== id);
+  if (!saveData()) data = JSON.parse(oldData);
+
+  renderAll();
+  notify("Buyer deleted.");
+}
+
+function deleteCrop(id) {
+  if (data.orders.some(x => x.cropId === id)) {
+    notify("This crop has order history. It cannot be deleted.");
+    return;
+  }
+  if (!confirm("Delete this crop?")) return;
+
+  const oldData = JSON.stringify(data);
+  data.crops = data.crops.filter(x => x.id !== id);
+  if (!saveData()) data = JSON.parse(oldData);
+
+  renderAll();
+  notify("Crop deleted.");
+}
+
+function deleteOrder(id) {
+  const order = data.orders.find(x => x.id === id);
+  if (!order) return;
+
+  if (!confirm("Delete this order and return its quantity to stock?")) return;
+
+  const oldData = JSON.stringify(data);
+  const crop = data.crops.find(x => x.id === order.cropId);
+
+  if (crop) {
+    crop.quantity = Math.round((crop.quantity + order.quantity) * 10000) / 10000;
+  }
+  data.orders = data.orders.filter(x => x.id !== id);
+
+  if (!saveData()) data = JSON.parse(oldData);
+
+  renderAll();
+  notify("Order deleted.");
+}
+
+// ===== EDIT ORDER =====
+function editOrder(id) {
+  const order = data.orders.find(x => x.id === id);
+  if (!order) return;
+
+  const crop = data.crops.find(x => x.id === order.cropId);
+  if (!crop) {
+    notify("Original crop not found.");
+    return;
+  }
+
+  const buyer = data.buyers.find(x => x.id === order.buyerId);
+  if (!buyer) {
+    notify("Original buyer is deleted. This order cannot be edited.");
+    return;
+  }
+
+  const quantityText = prompt("Enter new quantity in kg:", order.quantity);
+  if (quantityText === null) return;
+
+  const newQuantity = Number(quantityText);
+  const available = crop.quantity + order.quantity;
+
+  if (!Number.isFinite(newQuantity) || newQuantity <= 0 ||
+      newQuantity > available) {
+    notify("Invalid quantity. Maximum available is " + available + " kg.");
+    return;
+  }
+
+  const oldData = JSON.stringify(data);
+
+  crop.quantity = Math.round((available - newQuantity) * 10000) / 10000;
+  order.quantity = newQuantity;
+  order.price = crop.price;
+  order.total = Math.round(crop.price * newQuantity * 100) / 100;
+
+  if (!saveData()) data = JSON.parse(oldData);
+
+  renderAll();
+  notify("Order updated.");
+}
+
+// ===== RENDER FARMERS =====
+function renderFarmers() {
+  byId("farmersList").innerHTML = data.farmers.length
+    ? data.farmers.map(f => `
+      <article class="card">
+        <h3>👨‍🌾 ${safe(f.name)}</h3>
+        <p><b>Phone:</b> ${safe(f.phone)}</p>
+        <p><b>Location:</b> ${safe(f.location)}</p>
+        <div class="actions">
+          <button class="edit" data-action="edit-farmer" data-id="${safe(f.id)}">✏️ Edit</button>
+          <button class="delete" data-action="delete-farmer" data-id="${safe(f.id)}">🗑️ Delete</button>
+        </div>
+      </article>`).join("")
+    : empty("No farmers registered yet.");
+
+  byId("cropFarmer").innerHTML =
+    '<option value="">Select farmer</option>' +
+    data.farmers.map(f =>
+      `<option value="${safe(f.id)}">${safe(f.name)} — ${safe(f.location)}</option>`
+    ).join("");
+}
+
+// ===== RENDER CROPS =====
+function renderCrops() {
+  const search = byId("cropSearch").value.trim().toLowerCase();
+  const filtered = data.crops.filter(c =>
+    c.name.toLowerCase().includes(search) ||
+    farmerName(c.farmerId).toLowerCase().includes(search)
+  );
+
+  byId("cropsList").innerHTML = filtered.length
+    ? filtered.map(c => `
+      <article class="card">
+        <h3>🌾 ${safe(c.name)}</h3>
+        <p class="price">${money(c.price)} / kg</p>
+        <p><b>Farmer:</b> ${safe(farmerName(c.farmerId))}</p>
+        <p><b>Available:</b> ${c.quantity} kg</p>
+        <p>${c.quantity > 0 ? "✅ In stock" : "Out of stock"}</p>
+        <div class="actions">
+          <button class="edit" data-action="edit-crop" data-id="${safe(c.id)}">✏️ Edit</button>
+          <button class="delete" data-action="delete-crop" data-id="${safe(c.id)}">🗑️ Delete</button>
+        </div>
+      </article>`).join("")
+    : empty(search ? "No matching crops found." : "No crops added yet.");
+}
+
+// ===== RENDER BUYERS =====
+function renderBuyers() {
+  byId("buyersList").innerHTML = data.buyers.length
+    ? data.buyers.map(b => `
+      <article class="card">
+        <h3>🛒 ${safe(b.name)}</h3>
+        <p><b>Phone:</b> ${safe(b.phone)}</p>
+        <div class="actions">
+          <button class="edit" data-action="edit-buyer" data-id="${safe(b.id)}">✏️ Edit</button>
+          <button class="delete" data-action="delete-buyer" data-id="${safe(b.id)}">🗑️ Delete</button>
+        </div>
+      </article>`).join("")
+    : empty("No buyers registered yet.");
+
+  byId("orderBuyer").innerHTML =
+    '<option value="">Select buyer</option>' +
+    data.buyers.map(b =>
+      `<option value="${safe(b.id)}">${safe(b.name)}</option>`
+    ).join("");
+}
+
+// ===== RENDER ORDER CROPS =====
+function renderOrderCrops() {
+  const select = byId("orderCrop");
+  const previous = select.value;
+  const available = data.crops.filter(c => c.quantity > 0);
+
+  select.innerHTML = '<option value="">Select crop</option>' +
+    available.map(c =>
+      `<option value="${safe(c.id)}">${safe(c.name)} — ${money(c.price)}/kg (${c.quantity} kg available)</option>`
+    ).join("");
+
+  if (available.some(c => c.id === previous)) select.value = previous;
+
+  const crop = available.find(c => c.id === select.value);
+  if (crop) byId("orderQuantity").max = crop.quantity;
+  else byId("orderQuantity").removeAttribute("max");
+
+  updateOrderTotal();
+}
+
+// ===== RENDER ORDER HISTORY =====
+function renderOrders() {
+  if (data.orders.length === 0) {
+    byId("ordersList").innerHTML = empty("No orders yet. Place an order to see it here.");
+    return;
+  }
+
+  byId("ordersList").innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Order ID</th><th>Buyer</th><th>Crop</th>
+        <th>Quantity</th><th>Total</th><th>Date</th><th>Actions</th>
+      </tr></thead>
+      <tbody>
+      ${data.orders.slice().reverse().map(o => `
+        <tr>
+          <td>${safe(o.id.slice(0, 8))}</td>
+          <td>${safe(o.buyerName)}</td>
+          <td>${safe(o.cropName)}</td>
+          <td>${o.quantity} kg</td>
+          <td>${money(o.total)}</td>
+          <td>${safe(o.date)}</td>
+          <td>
+            <button class="edit" data-action="edit-order" data-id="${safe(o.id)}">Edit</button>
+            <button class="delete" data-action="delete-order" data-id="${safe(o.id)}">Delete</button>
+          </td>
+        </tr>`).join("")}
+      </tbody>
+    </table>`;
+}
+
+// ===== DASHBOARD =====
+function renderAll() {
+  byId("farmerCount").textContent = data.farmers.length;
+  byId("cropCount").textContent = data.crops.filter(c => c.quantity > 0).length;
+  byId("buyerCount").textContent = data.buyers.length;
+  byId("orderCount").textContent = data.orders.length;
+
+  renderFarmers();
+  renderCrops();
+  renderBuyers();
+  renderOrderCrops();
+  renderOrders();
+}
+
+// ===== BUTTON CLICK HANDLER =====
+document.addEventListener("click", function (event) {
+  const button = event.target.closest("[data-action]");
+  if (!button) return;
+
+  const id = button.dataset.id;
+  const action = button.dataset.action;
+
+  switch (action) {
+    case "edit-farmer": editFarmer(id); break;
+    case "delete-farmer": deleteFarmer(id); break;
+    case "edit-crop": editCrop(id); break;
+    case "delete-crop": deleteCrop(id); break;
+    case "edit-buyer": editBuyer(id); break;
+    case "delete-buyer": deleteBuyer(id); break;
+    case "edit-order": editOrder(id); break;
+    case "delete-order": deleteOrder(id); break;
+  }
+});
+
+// ===== SEARCH =====
+byId("cropSearch").addEventListener("input", renderCrops);
+
+// ===== START =====
+renderAll();
+</script>
+
+</body>
+</html>
